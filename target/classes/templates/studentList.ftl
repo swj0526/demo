@@ -100,6 +100,7 @@
                             <input type="text" name="name" placeholder="学生姓名"
                                    autocomplete="off" class="layui-input" id="name">
                         </div>
+
                     </div>
                     <div class="layui-form-item" pane>
                         <label class="layui-form-label">学生班级</label>
@@ -204,8 +205,8 @@
                         $.post(url, serialize, function (result) {
                             layer.msg("成功");
                             //关闭弹出层
-                          /*  layer.close(mainIndex);*/
-                          //  return false;
+                            /*  layer.close(mainIndex);*/
+                            //  return false;
                             /* //刷新数据表格
                              tableIns.reload();*/
                             /* $(".layui-laypage-btn").click();//弹出框  关闭后刷新，停留在当前页*/
@@ -254,12 +255,7 @@
                     });
                     $('#excel').click(function () {
                         $.post("/toExcel", function (result) {
-                           if(result.success==true){
-                               alert(result.data)
-                               window.open(result.data);
-                           }else {
-                               alert(result.success)
-                               }
+                            window.open(result);
                         });
                     });
                 });
@@ -271,6 +267,6 @@
         <!-- 底部固定区域 -->
         © swj.com - 学生信息管理系统
     </div>
-
+</div>
 </body>
 </html>

@@ -25,7 +25,7 @@ public class ExcelService extends BaseService{
     @Autowired
     public HttpServletRequest req;
 
-    public ResultBean toExcel(){
+    public String toExcel(){
         List<StudentScoreBean> allByName = studentService.list();
         ExcelBean excelBean = new ExcelBean();
         excelBean.setExcelName("学生信息管理系统导出表");
@@ -35,14 +35,10 @@ public class ExcelService extends BaseService{
         excelBean.setTitle(title);
         String contextPath = req.getContextPath();
         System.out.println(contextPath);
-        excelBean.setPath("E:\\work\\demo\\src\\main\\resources\\WEB-INF");
+        excelBean.setPath("E:\\work\\demo\\src\\main\\resources\\static");
         Boolean excel1 = ExcelUtils.createExcel(excelBean);
-        String path = "WEB-INF/学生信息管理系统导出表.xlsx";
-        if (excel1 == true) {
-           return success(path);
-        } else {
-           return failure();
-        }
+        String path = "学生信息管理系统导出表.xlsx";
+        return path;
 
     }
 }

@@ -32,10 +32,7 @@ public class ExcelController {
      */
     @RequestMapping("/toExcel")
     @ResponseBody
-    public ResultBean toExcel() {
-        System.out.println("excel");
-        ResultBean resultBean = excelService.toExcel();
-        System.out.println(resultBean.getData());
-        return resultBean;
+    public String toExcel() {
+        return excelService.toExcel();
     }
 }
