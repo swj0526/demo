@@ -135,12 +135,13 @@
             </script>
             <#--//行工具栏-->
             <script type="text/html" id="barDemo">
-                <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                <a class="layui-btn  layui-btn-xs" lay-event="edit">编辑</a>
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
             </script>
             <#--监听事件-->
             <script>
                 layui.use(['table', 'layer', 'jquery', 'form', 'element', 'laypage'], function () {
+                    var currPage = 1;
                     var table = layui.table;
                     var layer = layui.layer;
                     var $ = layui.jquery;
@@ -153,10 +154,12 @@
                         , url: '/listConditionController'//数据接口
                         , id: 'userTableReload'
                         , page: true
+
                         , done: function (rest, curr, count) {
                             console.log(rest);//后台返回的json字符串
                             console.log(curr);//当前页
                             console.log(count);//数据总条数
+                            currPage = curr;
 
                         }
                         /* , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
@@ -200,16 +203,20 @@
                     form.on("submit(formDemo)", function (obj) {
                         //序列化表单提交数据
                         var serialize = $("#dataFor").serialize();
-                        /*   alert(serialize);*/
+                           alert(serialize);
+
                         //发送ajasx请求
                         $.post(url, serialize, function (result) {
-                            layer.msg("成功");
+                            tableIns.reload();
+                            /* layer.close(mainIndex);
+                             layer.msg("成功");*/
                             //关闭弹出层
-                            /*  layer.close(mainIndex);*/
-                            //  return false;
-                            /* //刷新数据表格
-                             tableIns.reload();*/
-                            /* $(".layui-laypage-btn").click();//弹出框  关闭后刷新，停留在当前页*/
+                            /*
+                                     //  return false;
+                                   /!* //刷新数据表格
+
+                                 /!* $(".layui-laypage-btn").click();//弹出框  关闭后刷新，停留在当前页*!/
+                               */
 
                         });
                     });
@@ -240,8 +247,11 @@
                             var gradeId = $("#gradeId");
                             //执行重载
                             table.reload('userTableReload', {
-                                url: "listConditionController"
-                                , where: {
+                             /*   url: "listConditionController",*/
+                                page: { //保留当前页
+                                    curr: currPage
+                                },
+                                where: {
                                     'name': name.val(),
                                     'gradeId': gradeId.val()
                                 }

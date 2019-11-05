@@ -32,7 +32,7 @@ public class ExcelController {
      */
     @RequestMapping("/toExcel")
     @ResponseBody
-    public String toExcel() {
+    public String toExcel() throws Exception {
         return excelService.toExcel();
     }
 }
