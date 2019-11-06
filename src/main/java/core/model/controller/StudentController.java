@@ -118,4 +118,15 @@ public class StudentController {
         return resultBean;
 
     }
+
+    /**
+     * 导出excle表格
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/doExcel")
+    @ResponseBody
+    public String doExcel() throws Exception {
+        return studentService.doExcle();
+    }
 }

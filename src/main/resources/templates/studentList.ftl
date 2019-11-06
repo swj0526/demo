@@ -203,11 +203,9 @@
                     form.on("submit(formDemo)", function (obj) {
                         //序列化表单提交数据
                         var serialize = $("#dataFor").serialize();
-                           alert(serialize);
-
                         //发送ajasx请求
                         $.post(url, serialize, function (result) {
-                          /*  tableIns.reload();*/
+                            /*  tableIns.reload();*/
                             /* layer.close(mainIndex);
                              layer.msg("成功");*/
                             //关闭弹出层
@@ -217,7 +215,10 @@
 
                                  /!* $(".layui-laypage-btn").click();//弹出框  关闭后刷新，停留在当前页*!/
                                */
-                            table.reload();
+                            alert(123);
+                            var type = $(this).data('type');
+                            active[type] ? active[type].call(this) : '';
+                            return false;
                         });
                     });
                     //监听行工具事件
@@ -247,7 +248,7 @@
                             var gradeId = $("#gradeId");
                             //执行重载
                             table.reload('userTableReload', {
-                             /*   url: "listConditionController",*/
+                                /*   url: "listConditionController",*/
                                 page: { //保留当前页
                                     curr: currPage
                                 },
@@ -264,7 +265,7 @@
                         return false;
                     });
                     $('#excel').click(function () {
-                        $.post("/toExcel", function (result) {
+                        $.post("/doExcel", function (result) {
                             window.open(result);
                         });
                     });

@@ -47,16 +47,15 @@ public class ExcelUtils {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(excel.getPath() + "/" + excel.getExcelName() + ".xlsx");
+            hssfWorkbook.write(fos);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
-        try {
-            hssfWorkbook.write(fos);
+        }finally {
+            hssfWorkbook.close();
             fos.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
+
 
     }
 }

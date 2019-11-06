@@ -1,11 +1,14 @@
 package core.model.service;
 
 import core.model.bean.*;
+import core.utils.ExcelUtils;
 import core.utils.database.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sun.security.pkcs11.Secmod;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -13,7 +16,8 @@ import java.util.*;
 public class StudentService extends BaseService {
     @Autowired
     private ScoreService scoreService;
-
+    @Autowired
+    public HttpServletRequest req;
 
     public ResultBean addStudent(StudentBean studentBean) { //新增学生(service)
         System.out.println("新增学生");
@@ -282,5 +286,24 @@ public class StudentService extends BaseService {
 
         }
         return listStudent;
+    }
+
+    public String doExcle() throws IOException, IllegalAccessException {
+        List<StudentScoreBean> allByName = list();
+        ExcelBean excelBean = new ExcelBean();
+        excelBean.setExcelName("学生信息管理系统导出表");
+        excelBean.setSheetName("学生信息表");
+        excelBean.setList(allByName);
+        String[] title = new String[]{"姓名", "地址", "语文成绩", "数学成绩", "英语成绩", "入学时间", "所在年级"};
+        String[] keys = new String[]{"name", "address", "chinese", "maths", "english", "time", "gradeName"};
+        excelBean.setTitle(title);
+        excelBean.setKeys(keys);
+        String contextPath = req.getContextPath();
+        System.out.println(contextPath);
+        excelBean.setPath("E:\\work\\demo\\src\\main\\resources\\static\\file");
+        ExcelUtils.createExcel(excelBean);
+        String path = "/file/学生信息管理系统导出表.xlsx";
+        /*   deleteFile.deleteFile(path);*/
+        return path;
     }
 }
