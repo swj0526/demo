@@ -13,6 +13,7 @@
 <body class="layui-layout-body">
 
 <#--//修改删除弹出层-->
+<div>
 <div style="display: none" id="updateOrDelete">
     <form class="layui-form" lay-filter="dataForm" id="dataFor" style="margin-right: 30px;">
         <div class="layui-form-item" style="display: none;">
@@ -82,6 +83,7 @@
         </div>
     </form>
 </div>
+</div>
 <div class="layui-layout layui-layout-admin">
     <#--    导入头-->
     <#include "header.ftl">
@@ -141,25 +143,29 @@
             <#--监听事件-->
             <script>
                 layui.use(['table', 'layer', 'jquery', 'form', 'element', 'laypage'], function () {
+
                     var currPage = 1;
+                    var count1 = 0;
                     var table = layui.table;
                     var layer = layui.layer;
                     var $ = layui.jquery;
                     var form = layui.form;
                     var element = layui.element;
                     var laypage = layui.laypage;
+                    var name = $("#name");
+                    var gradeId = $("#gradeId");
                     //渲染数据表格
                     var tableIns = table.render({
                         elem: '#test'//渲染目标
                         , url: '/listConditionController'//数据接口
                         , id: 'userTableReload'
                         , page: true
-
                         , done: function (rest, curr, count) {
                             console.log(rest);//后台返回的json字符串
                             console.log(curr);//当前页
                             console.log(count);//数据总条数
                             currPage = curr;
+                            count1 = count;
 
                         }
                         /* , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
@@ -203,24 +209,27 @@
                     form.on("submit(formDemo)", function (obj) {
                         //序列化表单提交数据
                         var serialize = $("#dataFor").serialize();
+
+
                         //发送ajasx请求
                         $.post(url, serialize, function (result) {
-                            /*  tableIns.reload();*/
-                            /* layer.close(mainIndex);
-                             layer.msg("成功");*/
-                            //关闭弹出层
-                            /*
-                                     //  return false;
-                                   /!* //刷新数据表格
-
-                                 /!* $(".layui-laypage-btn").click();//弹出框  关闭后刷新，停留在当前页*!/
-                               */
-                            alert(123);
-                            var type = $(this).data('type');
-                            active[type] ? active[type].call(this) : '';
-                            return false;
+                            /*tableIns.reload({
+                                where: { //设定异步数据接口的额外参数，任意设
+                                    'name': name.val(),
+                                    'gradeId': gradeId.val()
+                                }
+                                , page: {
+                                    curr: currPage //重新从第 1 页开始
+                                }
+                            });
+                            alert(123);*/
                         });
                     });
+                    var tanchu1 = '<div>'
+                        + '<input id="name" type="text" name="name" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input"> '
+                        + '<input id="address"  type="text" name="address" required lay-verify="required" placeholder=请输入密码 autocomplete="off" class="layui-input"> '
+                        + '<div style="text-align:center ;"><button id="tijiao" type="button" class="layui-btn" >提交</button></div>'
+                        + '</div>';
                     //监听行工具事件
                     table.on('tool(test)', function (obj) {
                         var data = obj.data;//获得当前行数据
@@ -233,25 +242,30 @@
                                 //删除事件
                                 $.post("/delStudentController", {id: data.id, scoreId: data.scoreId}, function () {
                                     layer.msg("删除成功!");
-                                    $(".layui-laypage-btn").click();//弹出框  关闭后刷新，停留在当前页
                                 });
                             });
                         } else if (obj.event === 'edit') {//编辑
-                            modify(data);
+                            /*   modify(data);*/
+                           layer.open({
+                               title:"修改",
+                               content:tanchu1
+                           });
+                           $("#tijiao").click(function () {
+                               alert($("#yonghuming").val())
+                               $.post('modifyStudentScoreController',{
+                                   name:$("#yonghuming").val()
+                               },function (result) {
+                                   alert(1);
+                               })
+                           });
 
 
                         }
                     });
                     var $ = layui.$, active = {
                         reload: function () {
-                            var name = $("#name");
-                            var gradeId = $("#gradeId");
                             //执行重载
                             table.reload('userTableReload', {
-                                /*   url: "listConditionController",*/
-                                page: { //保留当前页
-                                    curr: currPage
-                                },
                                 where: {
                                     'name': name.val(),
                                     'gradeId': gradeId.val()
@@ -269,6 +283,9 @@
                             window.open(result);
                         });
                     });
+
+
+
                 });
             </script>
         </div>

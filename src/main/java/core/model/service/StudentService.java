@@ -20,20 +20,14 @@ public class StudentService extends BaseService {
     public HttpServletRequest req;
 
     public ResultBean addStudent(StudentBean studentBean) { //新增学生(service)
-        System.out.println("新增学生");
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String dateNowStr = sdf.format(date);
         studentBean.setTime(dateNowStr);
-        System.out.println(studentBean.getAddress());
-        System.out.println(studentBean.getName());
-        System.out.println(studentBean.getGradeId());
         int add = add(studentBean);//新增学生并返回学生的id
-        System.out.println(add + "学生id");
         if (add != 0) {
             StudentScoreBean scoreBean = new StudentScoreBean();
             int add1 = scoreService.add(scoreBean);//新增成绩并返回id
-            System.out.println(add1);
             if (add1 != 0) {
                 studentBean.setId(add);
                 studentBean.setScoreId(add1);
@@ -54,7 +48,6 @@ public class StudentService extends BaseService {
     public int add(StudentBean studentBean) {//新增学生(dao)
         String sql = "INSERT INTO tbstudent (name,address,time,gradeId) VALUES ('" + studentBean.getName() + "','" + studentBean.getAddress()
                 + "','" + studentBean.getTime() + "'," + studentBean.getGradeId() + ")";
-        System.out.println(sql);
         int update = (int) DBUtils.add_returnId(sql);
         return update;
 
@@ -62,33 +55,26 @@ public class StudentService extends BaseService {
 
     public int modifyScore(StudentBean studentBean) {//修改学生分数id(dao)
         String sql = "UPDATE tbstudent SET scoreId =" + studentBean.getScoreId() + " WHERE id = " + studentBean.getId();
-        System.out.println(sql);
         int update = DBUtils.update(sql);
         return update;
 
     }
 
     public ResultBean getStudent(StudentBean studentBean) { //根据姓名验证学生是否存在(service)
-        System.out.println("进入service");
         StudentBean studentBeanDB = get(studentBean);
-        System.out.println(studentBeanDB);
         if (studentBeanDB == null) {
-            System.out.println("学生不存在");
             return failure("该学生不存在");
         } else {
             int scoreId = studentBeanDB.getScoreId();
-            System.out.println("分数id" + scoreId);
             return success(studentBeanDB);
         }
     }
 
     public StudentBean get(StudentBean studentBean) { //根据姓名验证学生是否存在(dao)
         String sql = "SELECT * FROM tbstudent WHERE name = '" + studentBean.getName() + "'";
-        System.out.println(sql);
         StudentBean studentBeanDB = null;
         try {
             List<Map<String, Object>> list = DBUtils.getList(sql);
-            System.out.println(list);
             if (list.size() != 0) {
                 studentBeanDB = new StudentBean();
                 Map<String, Object> map = list.get(0);
@@ -101,9 +87,7 @@ public class StudentService extends BaseService {
                     }
                 }
             }
-            System.out.println(studentBeanDB.getScoreId());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
         }
         return studentBeanDB;
 
@@ -124,7 +108,6 @@ public class StudentService extends BaseService {
                 "   ORDER BY c.chinese,c.english,c.maths";
         List list = DBUtils.getList(sql);
         List<StudentScoreBean> listStudent = new ArrayList<>();
-        System.out.println(list);
         if (list.size() != 0) {
             for (int i = 0; i < list.size(); i++) {
                 StudentScoreBean studentScoreBean = new StudentScoreBean();
@@ -162,7 +145,6 @@ public class StudentService extends BaseService {
 
     public ResultBean modifyStudentScore(StudentScoreBean studentScoreBean) { //修改学生成绩所以信息service
         int i = modifyStudent(studentScoreBean);  //修改学生
-        System.out.println("成绩id:" + studentScoreBean.getScoreId());
         if (i != 0) {
             ScoreBean scoreBean = new ScoreBean();
             scoreBean.setId(studentScoreBean.getScoreId());
@@ -181,7 +163,6 @@ public class StudentService extends BaseService {
         String sql = "UPDATE tbstudent SET " +
                 "name = '" + studentScoreBean.getName() + "' , address = '" + studentScoreBean.getAddress() + "' ," +
                 "gradeId = " + studentScoreBean.getGradeId() + " WHERE id = " + studentScoreBean.getId();
-        System.out.println(sql);
         int update = DBUtils.update(sql);
         return update;
     }
@@ -190,7 +171,6 @@ public class StudentService extends BaseService {
         int i = delStudent(studentScoreBean);//删除学生信息
         if (i != 0) {
             int scoreId = studentScoreBean.getScoreId();
-            System.out.println("删除1" + scoreId);
             ScoreBean scoreBean = new ScoreBean();
             scoreBean.setId(scoreId);
             int del = scoreService.del(scoreBean); //删除学生成绩
@@ -213,11 +193,9 @@ public class StudentService extends BaseService {
             return failure();
         } else {
             if (studentScoreBean.getGradeId() == 0 && (studentScoreBean.getName() == null || studentScoreBean.getName() == "")) {
-                System.out.println("全部数据");
                 int count = DBUtils.getCount("tbstudent");
                 return success(list, count);
             } else {
-                System.out.println("条件数据");
                 int count = list.size();
                 return success(list, count);
             }
@@ -244,7 +222,6 @@ public class StudentService extends BaseService {
 
         List list = DBUtils.getList(sql);
         List<StudentScoreBean> listStudent = new ArrayList<>();
-        System.out.println(list);
         if (list.size() != 0) {
             for (int i = 0; i < list.size(); i++) {
                 StudentScoreBean studentScoreBeanDB = new StudentScoreBean();
@@ -299,7 +276,6 @@ public class StudentService extends BaseService {
         excelBean.setTitle(title);
         excelBean.setKeys(keys);
         String contextPath = req.getContextPath();
-        System.out.println(contextPath);
         excelBean.setPath("E:\\work\\demo\\src\\main\\resources\\static\\file");
         ExcelUtils.createExcel(excelBean);
         String path = "/file/学生信息管理系统导出表.xlsx";

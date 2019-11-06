@@ -24,10 +24,8 @@ public class AdminService extends BaseService {
         } else {
             String old_pass = Md5Utils.md5Utils(adminBean.getPassword());
             if (old_pass.equals(adminBeaDB.getPassword())) {
-                System.out.println("登录成功");
                 return success(adminBeaDB);
             } else {
-                System.out.println("登录失败");
                 return failure("密码错误!");
             }
         }
