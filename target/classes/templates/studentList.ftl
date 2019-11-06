@@ -207,7 +207,7 @@
 
                         //发送ajasx请求
                         $.post(url, serialize, function (result) {
-                            tableIns.reload();
+                          /*  tableIns.reload();*/
                             /* layer.close(mainIndex);
                              layer.msg("成功");*/
                             //关闭弹出层
@@ -217,7 +217,7 @@
 
                                  /!* $(".layui-laypage-btn").click();//弹出框  关闭后刷新，停留在当前页*!/
                                */
-
+                            table.reload();
                         });
                     });
                     //监听行工具事件

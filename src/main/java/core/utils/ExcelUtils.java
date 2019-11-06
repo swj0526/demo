@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 public class ExcelUtils {
-    public static Boolean createExcel(ExcelBean excel) throws IllegalAccessException, IOException {
+    public static void createExcel(ExcelBean excel) throws IllegalAccessException, IOException {
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(); //创建一个工作部
         HSSFSheet hssfSheet = hssfWorkbook.createSheet(excel.getSheetName());//创建一个工作表(参数是sheet表的名称)
         //创建第一行sheet表中的内容,索引是从0开始,第一行是sheet表的标题栏
@@ -53,10 +53,10 @@ public class ExcelUtils {
         try {
             hssfWorkbook.write(fos);
             fos.close();
-            return true;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+
     }
 }

@@ -102,6 +102,7 @@ public class StudentService extends BaseService {
             System.out.println(e.getMessage());
         }
         return studentBeanDB;
+
     }
 
     public ResultBean listStudentScore() { //查找所有学生信息(service)
@@ -207,25 +208,21 @@ public class StudentService extends BaseService {
         if (list.size() == 0) {
             return failure();
         } else {
-           if(studentScoreBean.getGradeId()==0&&(studentScoreBean.getName()==null||studentScoreBean.getName()=="")){
-               System.out.println("全部数据");
-               int count = DBUtils.getCount("tbstudent");
-               return success(list,count);
-           }else{
-               System.out.println("条件数据");
-               int count = list.size();
-               return success(list,count);
-           }
+            if (studentScoreBean.getGradeId() == 0 && (studentScoreBean.getName() == null || studentScoreBean.getName() == "")) {
+                System.out.println("全部数据");
+                int count = DBUtils.getCount("tbstudent");
+                return success(list, count);
+            } else {
+                System.out.println("条件数据");
+                int count = list.size();
+                return success(list, count);
+            }
         }
     }
 
     public List<StudentScoreBean> list(StudentScoreBean studentScoreBean, String page, String limit) { //模糊查询dao
         String sql = "";
         String name = "";
-        System.out.println("姓名:" + studentScoreBean.getName());
-        System.out.println("年级:" + studentScoreBean.getGradeId());
-
-
         if (studentScoreBean.getName() != null) {
             name = studentScoreBean.getName();
         }
@@ -240,7 +237,7 @@ public class StudentService extends BaseService {
                     " WHERE t.name like '%" +
                     name + "%' AND t.gradeId = " + studentScoreBean.getGradeId() + "  ORDER BY c.chinese,c.english,c.maths  limit " + (Integer.valueOf(page) - 1) * 10 + ", " + limit;
         }
-        System.out.println(sql);
+
         List list = DBUtils.getList(sql);
         List<StudentScoreBean> listStudent = new ArrayList<>();
         System.out.println(list);

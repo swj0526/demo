@@ -40,7 +40,7 @@ public class ExcelService extends BaseService {
         String contextPath = req.getContextPath();
         System.out.println(contextPath);
         excelBean.setPath("E:\\work\\demo\\src\\main\\resources\\static\\file");
-        Boolean excel1 = ExcelUtils.createExcel(excelBean);
+        ExcelUtils.createExcel(excelBean);
         String path = "/file/学生信息管理系统导出表.xlsx";
         /*   deleteFile.deleteFile(path);*/
         return path;

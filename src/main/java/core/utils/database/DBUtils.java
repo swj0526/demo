@@ -1,5 +1,7 @@
 package core.utils.database;
 
+import core.model.bean.StudentScoreBean;
+import org.apache.poi.ss.formula.functions.T;
 import sun.plugin.javascript.navig.Link;
 
 import java.sql.*;
@@ -11,7 +13,7 @@ import java.util.Map;
 public class DBUtils {
     public static MyDataSource dataSource = new MyDataSource();
 
-    public static List getList(String sql) {  //获取数据返回的信息列表
+    public static List getList(String sql) {  //获取数据返回的信息列表()
         Connection conn = null;
         PreparedStatement state = null;
         ResultSet result = null;
@@ -21,14 +23,13 @@ public class DBUtils {
             result = state.executeQuery();
             ResultSetMetaData metaData = result.getMetaData();
             int columnCount = metaData.getColumnCount();
-            List<Map<String,Object>> list = new ArrayList();
-            while (result.next()) {
-                Map<String ,Object> rowData = new HashMap();
+            List<Map<String, Object>> list = new ArrayList();
+            while (result.next()) {   //将返回的result结果集,放到一个List<Map<String,Object>>中
+                Map<String, Object> rowData = new HashMap();
                 for (int i = 1; i <= columnCount; i++) {
                     rowData.put(metaData.getColumnName(i), result.getObject(i));
                 }
                 list.add(rowData);
-
             }
             return list;
         } catch (Exception e) {
@@ -42,7 +43,9 @@ public class DBUtils {
             }
             dataSource.releaseConnection(conn);
         }
-       return null;
+
+
+        return null;
     }
 
     public static int update(String sql) {  //增,删,改数据的方法
@@ -53,7 +56,7 @@ public class DBUtils {
             conn = dataSource.getConnection();
             state = conn.prepareStatement(sql);
             num = state.executeUpdate();
-           return  num;
+            return num;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -69,22 +72,22 @@ public class DBUtils {
 
     public static int add_returnId(String sql) {   //新增数据并返回新增数据的id
         Connection conn = null;
-        ResultSet generatedKeys =null;
+        ResultSet generatedKeys = null;
         PreparedStatement state = null;
         int id = 0;
         try {
             conn = dataSource.getConnection();
-            state = conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+            state = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             state.executeUpdate();
             generatedKeys = state.getGeneratedKeys();
             while (generatedKeys.next()) {
                 id = generatedKeys.getInt(1);
             }
-            System.out.println("id:"+id);
-           return  id;
+            System.out.println("id:" + id);
+            return id;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-        }finally {
+        } finally {
             try {
                 generatedKeys.close();
                 state.close();
@@ -102,7 +105,7 @@ public class DBUtils {
         ResultSet result = null;
         int num = 0;
         try {
-            String sql ="SELECT  COUNT(*)  FROM  "+tableName ;
+            String sql = "SELECT  COUNT(*)  FROM  " + tableName;
             conn = dataSource.getConnection();
             state = conn.prepareStatement(sql);
             result = state.executeQuery();

@@ -5,6 +5,7 @@ import core.model.bean.ResultBean;
 import core.utils.Md5Utils;
 import core.utils.database.DBUtils;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +55,7 @@ public class AdminService extends BaseService {
             System.out.println(e.getMessage());
         }
         return adminBeanDB;
+
     }
 
 
