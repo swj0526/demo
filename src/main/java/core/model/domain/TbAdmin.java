@@ -1,7 +1,11 @@
 package core.model.domain;
 
-public class TbAdmin {  //管理员账号表
-    private int id;
+import net.atomarrow.domains.Domain;
+import org.springframework.stereotype.Component;
+
+@Component
+public class TbAdmin extends Domain {  //管理员账号表
+    private Integer id;
     private String userName; //用户名
     private String password; //密码
 
@@ -36,5 +40,14 @@ public class TbAdmin {  //管理员账号表
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+    public TbAdmin(Integer id, String userName, String password) {
+        this.id = id;
+        this.userName = userName;
+        this.password = password;
+    }
+
+    public TbAdmin() {
     }
 }

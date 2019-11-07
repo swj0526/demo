@@ -4,9 +4,14 @@ import core.model.bean.PagerBean;
 import core.model.bean.ResultBean;
 import core.model.bean.StudentBean;
 import core.model.bean.StudentScoreBean;
+import core.model.domain.TbAdmin;
 import core.model.service.ScoreService;
 import core.model.service.StudentService;
 import core.utils.database.DBUtils;
+import net.atomarrow.render.Render;
+import net.atomarrow.util.excel.ExcelDatas;
+import net.atomarrow.util.excel.ExcelFormatListener;
+import net.atomarrow.util.excel.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
@@ -16,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class StudentController {
@@ -126,7 +134,27 @@ public class StudentController {
      */
     @RequestMapping("/doExcel")
     @ResponseBody
-    public String doExcel() throws Exception {
-        return studentService.doExcle();
+    public Render doExcel() throws Exception {
+        ExcelDatas excelDatas = new ExcelDatas();
+        List<TbAdmin> list = new ArrayList<>();
+        list.add(new TbAdmin(1,"12","12"));
+        list.add(new TbAdmin(1,"1233","12233"));
+        excelDatas.addStringArray(0,0,new String[]{"编号","用户名","密码"});
+        excelDatas.addObjectList(1,0,list,new String[]{"id","userName","password"});//行,列,集合
+
+        InputStream inputStream = ExcelUtil.exportExcel(excelDatas);
+      ExcelUtil.getListFromExcel("123", TbAdmin.class, new String[]{}, new boolean[]{}, 1, new ExcelFormatListener() {
+          @Override
+          public Object changeValue(String fieldName, Object fieldValue, int currentRow, int currentCol) {
+              if(fieldName.equals("sex")){
+                  if((Integer) fieldValue==1){
+                      return "男";
+                  }
+              }
+              return null;
+          }
+      });
+        return Render.renderFile("学生信息表.xls",inputStream);
+        /* return studentService.doExcle();*/
     }
 }

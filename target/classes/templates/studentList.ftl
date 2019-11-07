@@ -13,7 +13,6 @@
 <body class="layui-layout-body">
 
 <#--//修改删除弹出层-->
-<div>
 <div style="display: none" id="updateOrDelete">
     <form class="layui-form" lay-filter="dataForm" id="dataFor" style="margin-right: 30px;">
         <div class="layui-form-item" style="display: none;">
@@ -76,13 +75,13 @@
             </div>
         </div>
 
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="formDemo" id="but">修改</button>
-            </div>
-        </div>
+
     </form>
-</div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-filter="formDemo" id="btn">修改</button>
+        </div>
+    </div>
 </div>
 <div class="layui-layout layui-layout-admin">
     <#--    导入头-->
@@ -205,31 +204,19 @@
                     }
 
 
-                    //监听提交事件
-                    form.on("submit(formDemo)", function (obj) {
+                    /* //监听提交事件
+                     form.on("submit(formDemo)", function (obj) {
+
+                     });*/
+                    $('#btn').click(function () {
                         //序列化表单提交数据
                         var serialize = $("#dataFor").serialize();
-
-
                         //发送ajasx请求
                         $.post(url, serialize, function (result) {
-                            /*tableIns.reload({
-                                where: { //设定异步数据接口的额外参数，任意设
-                                    'name': name.val(),
-                                    'gradeId': gradeId.val()
-                                }
-                                , page: {
-                                    curr: currPage //重新从第 1 页开始
-                                }
-                            });
-                            alert(123);*/
+                            layer.close(mainIndex);
+                            tableIns.reload();
                         });
                     });
-                    var tanchu1 = '<div>'
-                        + '<input id="name" type="text" name="name" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input"> '
-                        + '<input id="address"  type="text" name="address" required lay-verify="required" placeholder=请输入密码 autocomplete="off" class="layui-input"> '
-                        + '<div style="text-align:center ;"><button id="tijiao" type="button" class="layui-btn" >提交</button></div>'
-                        + '</div>';
                     //监听行工具事件
                     table.on('tool(test)', function (obj) {
                         var data = obj.data;//获得当前行数据
@@ -245,27 +232,16 @@
                                 });
                             });
                         } else if (obj.event === 'edit') {//编辑
-                            /*   modify(data);*/
-                           layer.open({
-                               title:"修改",
-                               content:tanchu1
-                           });
-                           $("#tijiao").click(function () {
-                               alert($("#yonghuming").val())
-                               $.post('modifyStudentScoreController',{
-                                   name:$("#yonghuming").val()
-                               },function (result) {
-                                   alert(1);
-                               })
-                           });
-
-
+                            modify(data)
                         }
                     });
                     var $ = layui.$, active = {
                         reload: function () {
                             //执行重载
                             table.reload('userTableReload', {
+                                page: {
+                                    curr: currPage
+                                },
                                 where: {
                                     'name': name.val(),
                                     'gradeId': gradeId.val()
@@ -283,7 +259,6 @@
                             window.open(result);
                         });
                     });
-
 
 
                 });

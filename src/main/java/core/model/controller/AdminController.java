@@ -2,7 +2,9 @@ package core.model.controller;
 
 import core.model.bean.AdminBean;
 import core.model.bean.ResultBean;
+import core.model.domain.TbStudent;
 import core.model.service.AdminService;
+import net.atomarrow.bean.ServiceResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,14 +68,15 @@ public class AdminController {
     @RequestMapping("/loginCheck")
     @ResponseBody
     public ResultBean loginCheck(Map<String, Object> map, AdminBean adminBean) {
-        ResultBean admin = adminService.getAdmin(adminBean);
+       /* ResultBean admin = adminService.getAdmin(adminBean);
         if (admin.getSuccess() == true) {
             HttpSession session = request.getSession();
             session.setAttribute("admin", admin);
             AdminBean adminBeanSession = (AdminBean) admin.getData();
             session.setAttribute("name", adminBeanSession.getUserName());
         }
-        return admin;
+        return admin;*/
+       return null;
     }
 
 
@@ -86,8 +89,9 @@ public class AdminController {
     @RequestMapping("/registerCheck")
     @ResponseBody
     public ResultBean registerCheck(AdminBean adminBean) {
-        ResultBean admin = adminService.addAdmin(adminBean);
-        return admin;
+     /* ServiceResult result = adminService.getAdmin( new TbStudent());
+        ResultBean admin = adminService.addAdmin(adminBean);*/
+        return null;
     }
 
     /**
