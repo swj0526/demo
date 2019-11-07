@@ -47,7 +47,6 @@ public class AdminController {
         return "login";
 
     }
-
     /**
      * 注册页面
      *
@@ -68,15 +67,15 @@ public class AdminController {
     @RequestMapping("/loginCheck")
     @ResponseBody
     public ResultBean loginCheck(Map<String, Object> map, AdminBean adminBean) {
-       /* ResultBean admin = adminService.getAdmin(adminBean);
+     ResultBean admin = adminService.getAdmin(adminBean);
         if (admin.getSuccess() == true) {
             HttpSession session = request.getSession();
             session.setAttribute("admin", admin);
             AdminBean adminBeanSession = (AdminBean) admin.getData();
             session.setAttribute("name", adminBeanSession.getUserName());
         }
-        return admin;*/
-       return null;
+        return admin;
+
     }
 
 

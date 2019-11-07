@@ -14,10 +14,7 @@
 
 </head>
 <body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin">
-    <#include "header.ftl"/>
-    <#include "left.ftl"/>
-    <div class="layui-body">
+
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
             <div>
@@ -59,13 +56,6 @@
                 </form>
             </div>
         </div>
-    </div>
-
-    <div class="layui-footer">
-        <!-- 底部固定区域 -->
-        © swj.com - 学生信息管理系统
-    </div>
-</div>
 
 </body>
 </html>

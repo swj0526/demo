@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginHendlerInterceptor implements HandlerInterceptor {
     /**
      * 执行controller之前
+     *
      * @param request
      * @param response
      * @param handler
@@ -23,17 +24,11 @@ public class LoginHendlerInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Object admin = request.getSession().getAttribute("admin");
         if (admin == null) {
-
             response.sendRedirect("/");
-            System.out.println("没有登录");
             return false;
         } else {
-
-            System.out.println("已经登录");
             return true;
         }
-
-
     }
 
     /**
