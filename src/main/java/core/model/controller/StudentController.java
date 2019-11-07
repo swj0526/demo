@@ -143,7 +143,7 @@ public class StudentController {
         excelDatas.addObjectList(1,0,list,new String[]{"id","userName","password"});//行,列,集合
 
         InputStream inputStream = ExcelUtil.exportExcel(excelDatas);
-      ExcelUtil.getListFromExcel("123", TbAdmin.class, new String[]{}, new boolean[]{}, 1, new ExcelFormatListener() {
+      /*ExcelUtil.getListFromExcel("123", TbAdmin.class, new String[]{}, new boolean[]{}, 1, new ExcelFormatListener() {
           @Override
           public Object changeValue(String fieldName, Object fieldValue, int currentRow, int currentCol) {
               if(fieldName.equals("sex")){
@@ -153,7 +153,7 @@ public class StudentController {
               }
               return null;
           }
-      });
+      });*/
         return Render.renderFile("学生信息表.xls",inputStream);
         /* return studentService.doExcle();*/
     }
