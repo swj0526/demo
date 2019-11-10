@@ -1,15 +1,13 @@
 package core.model.controller;
 
-import core.model.bean.AdminBean;
-import core.model.bean.ResultBean;
-import core.model.domain.TbStudent;
+import core.model.domain.TbAdmin;
 import core.model.service.AdminService;
 import net.atomarrow.bean.ServiceResult;
+import net.atomarrow.render.Render;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,7 +25,6 @@ public class AdminController {
 
     /**
      * 登录页面
-     *
      * @return
      */
     @RequestMapping("/")
@@ -37,7 +34,6 @@ public class AdminController {
 
     /**
      * 注销返回登录页面
-     *
      * @return
      */
     @RequestMapping("/logout")
@@ -47,9 +43,9 @@ public class AdminController {
         return "login";
 
     }
+
     /**
      * 注册页面
-     *
      * @return
      */
     @RequestMapping("/register")
@@ -61,41 +57,41 @@ public class AdminController {
      * 登录检查
      *
      * @param map
-     * @param adminBean
+     * @param admin
      * @return
      */
     @RequestMapping("/loginCheck")
     @ResponseBody
-    public ResultBean loginCheck(Map<String, Object> map, AdminBean adminBean) {
-     ResultBean admin = adminService.getAdmin(adminBean);
-        if (admin.getSuccess() == true) {
+    public ServiceResult loginCheck(Map<String, Object> map, TbAdmin admin) {
+        ServiceResult adminDB = adminService.getAdminService(admin);
+        if (adminDB.isSuccess() == true) {
             HttpSession session = request.getSession();
             session.setAttribute("admin", admin);
-            AdminBean adminBeanSession = (AdminBean) admin.getData();
-            session.setAttribute("name", adminBeanSession.getUserName());
+            String userName = admin.getUserName();
+            session.setAttribute("name", userName);
+            return adminDB;
+        } else {
+            return adminDB;
         }
-        return admin;
-
     }
 
 
     /**
      * 注册检查
-     *
-     * @param adminBean
+     * @param admin
      * @return
      */
     @RequestMapping("/registerCheck")
     @ResponseBody
-    public ResultBean registerCheck(AdminBean adminBean) {
+    public ServiceResult registerCheck(TbAdmin admin) {
+        ServiceResult result = adminService.addAdminService(admin);
      /* ServiceResult result = adminService.getAdmin( new TbStudent());
         ResultBean admin = adminService.addAdmin(adminBean);*/
-        return null;
+        return result;
     }
 
     /**
      * 首页
-     *
      * @return
      */
     @RequestMapping("/home")

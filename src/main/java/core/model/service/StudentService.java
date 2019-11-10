@@ -1,59 +1,170 @@
+
 package core.model.service;
 
 import core.model.bean.*;
-import core.utils.ExcelUtils;
-import core.utils.database.DBUtils;
+import core.model.domain.TbAdmin;
+import core.model.domain.TbScore;
+import core.model.domain.TbStudent;
+import net.atomarrow.bean.Pager;
+import net.atomarrow.bean.ServiceResult;
+import net.atomarrow.db.parser.Conditions;
+import net.atomarrow.db.parser.JdbcParser;
+import net.atomarrow.render.Render;
+import net.atomarrow.services.Service;
+import net.atomarrow.util.StringUtil;
+import net.atomarrow.util.excel.ExcelDatas;
+import net.atomarrow.util.excel.ExcelFormatListener;
+import net.atomarrow.util.excel.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import sun.security.pkcs11.Secmod;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@Service
-public class StudentService extends BaseService {
+@Component
+public class StudentService extends Service {
     @Autowired
     private ScoreService scoreService;
     @Autowired
     public HttpServletRequest req;
 
-    public ResultBean addStudent(StudentBean studentBean) { //新增学生(service)
+    /**
+     * 新增学生service
+     *
+     * @param student
+     * @return
+     */
+    public ServiceResult addStudentService(TbStudent student) {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String dateNowStr = sdf.format(date);
-        studentBean.setTime(dateNowStr);
-        int add = add(studentBean);//新增学生并返回学生的id
-        if (add != 0) {
-            StudentScoreBean scoreBean = new StudentScoreBean();
-            int add1 = scoreService.add(scoreBean);//新增成绩并返回id
-            if (add1 != 0) {
-                studentBean.setId(add);
-                studentBean.setScoreId(add1);
-                int i = modifyScore(studentBean);
-                if (i != 0) {
-                    return success();
-                } else {
-                    return failure("服务器异常,新增学生失败!");
-                }
-            } else {
-                return failure("服务器异常,新增学生失败!");
-            }
-        } else {
-            return failure("服务器异常,新增学生失败!");
+        student.setTime(dateNowStr);
+        int studentId = Integer.valueOf(String.valueOf((BigInteger) add(student)));//新增学生信息并返回学生信息id
+        //新增学生的时候,在给配套添加学生的成绩,默认都是0
+        TbScore score = new TbScore();
+        BigInteger scoreId = (BigInteger) add(score);//新增成绩并返回成绩id
+        String id = String.valueOf(scoreId);
+        student.setScoreId(Integer.valueOf(id));
+        //创建Conditions对象
+        Conditions conditions = new Conditions(TbStudent.class);
+        conditions.putEW("id", studentId);
+        modifyWithColumn(conditions, new Serializable[]{"scoreId", id});
+        return success("新增成功");
+    }
+
+    /**
+     * 返回所有学生信息Service
+     *
+     * @return
+     */
+    public List<StudentScoreBean> listConditionService(TbStudent student, TbScore score, PageBean page) {
+        Conditions conditions = new Conditions(TbStudent.class);
+        conditions.setReturnClass(StudentScoreBean.class);
+        conditions.setSelectValue("student.id,student.name,student.address,student.time,score.chinese,score.english," +
+                "score.maths,grade.gradeName,grade.id AS gradeId");
+        conditions.setJoin(" student JOIN  tbscore AS score ON student.scoreId = score.id JOIN tbgrade AS grade" +
+                " ON grade.id = student.gradeId ");
+        if (!StringUtil.isEmpty(student.getName())) {
+            conditions.putLIKE("student.name", student.getName());
         }
+        if (student.getGradeId() == null || student.getGradeId() == 0) {
+        } else {
+            conditions.putEW("grade.id", String.valueOf(student.getGradeId()));
+        }
+        conditions.putASC("score.chinese");
+        System.out.println(JdbcParser.getInstance().getSelectHql(conditions));
+        Pager pager = new Pager();
+        int pageDB = (page.getPage() - 1) * 10;
+        page.setPage(pageDB);
+        pager.setCurrentPage(page.getPage());
+        pager.setPageSize(page.getLimit());
+        List<StudentScoreBean> list = getListByPage(conditions, pager);
+        return list;
     }
 
-    public int add(StudentBean studentBean) {//新增学生(dao)
-        String sql = "INSERT INTO tbstudent (name,address,time,gradeId) VALUES ('" + studentBean.getName() + "','" + studentBean.getAddress()
-                + "','" + studentBean.getTime() + "'," + studentBean.getGradeId() + ")";
-        int update = (int) DBUtils.add_returnId(sql);
-        return update;
+    /**
+     * 返回所有学生信息Service,无分页
+     *
+     * @return
+     */
+    public List<StudentScoreBean> listNoPage(TbStudent student, TbScore score) {
+        Conditions conditions = new Conditions(TbStudent.class);
+        conditions.setReturnClass(StudentScoreBean.class);
+        conditions.setSelectValue("student.id,student.name,student.address,student.time,score.chinese,score.english," +
+                "score.maths,grade.gradeName,grade.id AS gradeId");
+        conditions.setJoin(" student JOIN  tbscore AS score ON student.scoreId = score.id JOIN tbgrade AS grade" +
+                " ON grade.id = student.gradeId ");
+        if (!StringUtil.isEmpty(student.getName())) {
+            conditions.putLIKE("student.name", student.getName());
+        }
+        if (student.getGradeId() == null || student.getGradeId() == 0) {
+        } else {
+            conditions.putEW("grade.id", String.valueOf(student.getGradeId()));
+        }
+        conditions.putASC("score.chinese");
+        System.out.println(JdbcParser.getInstance().getSelectHql(conditions));
+        List<StudentScoreBean> list = getList(conditions);
+        return list;
+    }
+
+    /**
+     * 修改学生信息Service
+     *
+     * @param student
+     * @return
+     */
+    public ServiceResult modifyStudentService(TbStudent student) {
+        Conditions conditions = new Conditions(TbStudent.class);
+        conditions.putEW("id", student.getId());
+        modifyWithColumn(conditions, new Serializable[]{"name", student.getName(), "address", student.getAddress(), "gradeId",
+                student.getGradeId()});
+        System.out.println(JdbcParser.getInstance().getSelectHql(conditions));
+        return success("学生信息修改成功");
+    }
+
+    /**
+     * 返回总和
+     * @param conditions
+     * @return
+     */
+    public int getlistCount(Conditions conditions) {
+        return getCount(conditions);
+    }
+
+    /**
+     * 删除学生信息Service
+     *
+     * @param student
+     * @return
+     */
+    public ServiceResult deleteStudentService(TbStudent student) {
+        del(student);
+        return success("学生信息删除成功!");
+    }
+
+    /**
+     * 导出学生信息excel表格
+     */
+    public Render excelService(TbStudent student, TbScore score) {
+        ExcelDatas excelDatas = new ExcelDatas();
+        List<StudentScoreBean> list = listNoPage(student, score);
+        excelDatas.addStringArray(0, 0, new String[]{"姓名", "地址", "入学时间", "学生年级", "语文成绩", "数学成绩", "英语成绩"});
+        excelDatas.addObjectList(1, 0, list, new String[]{"name", "address", "time"
+                , "gradeName", "chinese", "maths", "english"});//行,列,集合
+        InputStream inputStream = ExcelUtil.exportExcel(excelDatas);
+        return Render.renderFile("学生信息表.xls", inputStream);
 
     }
 
-    public int modifyScore(StudentBean studentBean) {//修改学生分数id(dao)
+
+
+
+
+    /*public int modifyScore(StudentBean studentBean) {//修改学生分数id(dao)
         String sql = "UPDATE tbstudent SET scoreId =" + studentBean.getScoreId() + " WHERE id = " + studentBean.getId();
         int update = DBUtils.update(sql);
         return update;
@@ -68,9 +179,9 @@ public class StudentService extends BaseService {
             int scoreId = studentBeanDB.getScoreId();
             return success(studentBeanDB);
         }
-    }
+    }*/
 
-    public StudentBean get(StudentBean studentBean) { //根据姓名验证学生是否存在(dao)
+    /*public StudentBean get(StudentBean studentBean) { //根据姓名验证学生是否存在(dao)
         String sql = "SELECT * FROM tbstudent WHERE name = '" + studentBean.getName() + "'";
         StudentBean studentBeanDB = null;
         try {
@@ -100,9 +211,9 @@ public class StudentService extends BaseService {
         } else {
             return success(list);
         }
-    }
+    }*/
 
-    public List<StudentScoreBean> list() {
+   /* public List<StudentScoreBean> list() {
         String sql = "SELECT t.name,t.address,t.time,c.chinese,c.english,c.maths,g.gradeName  FROM  tbscore AS c RIGHT JOIN tbstudent AS t ON t.scoreId = c.scoreId" +
                 "  JOIN tbgrade AS g ON g.gradeId = t.gradeId " +
                 "   ORDER BY c.chinese,c.english,c.maths";
@@ -141,9 +252,9 @@ public class StudentService extends BaseService {
 
         }
         return listStudent;
-    }
+    }*/
 
-    public ResultBean modifyStudentScore(StudentScoreBean studentScoreBean) { //修改学生成绩所以信息service
+    /*public ResultBean modifyStudentScore(StudentScoreBean studentScoreBean) { //修改学生成绩所以信息service
         int i = modifyStudent(studentScoreBean);  //修改学生
         if (i != 0) {
             ScoreBean scoreBean = new ScoreBean();
@@ -179,9 +290,9 @@ public class StudentService extends BaseService {
             }
         }
         return failure();
-    }
+    }*/
 
-    public int delStudent(StudentScoreBean studentScoreBean) { //删除学生service
+  /*  public int delStudent(StudentScoreBean studentScoreBean) { //删除学生service
         String sql = "DELETE FROM tbstudent WHERE id =" + studentScoreBean.getId();
         int update = DBUtils.update(sql);
         return update;
@@ -279,7 +390,10 @@ public class StudentService extends BaseService {
         excelBean.setPath("E:\\work\\demo\\src\\main\\resources\\static\\file");
         ExcelUtils.createExcel(excelBean);
         String path = "/file/学生信息管理系统导出表.xlsx";
-        /*   deleteFile.deleteFile(path);*/
+
+        deleteFile.deleteFile(path);//*
+
         return path;
-    }
+    }*/
 }
+

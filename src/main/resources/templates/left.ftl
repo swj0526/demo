@@ -5,9 +5,6 @@
             <li class="layui-nav-item layui-nav-itemed">
                 <a class="add" id="1">新增学生信息</a>
             </li>
-            <li class="layui-nav-item">
-                <a class="add" id="2">新增学生成绩</a>
-            </li>
             <li class="layui-nav-item"><a class="add" id="3">学生信息列表</a></li>
         </ul>
     </div>

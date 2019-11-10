@@ -1,5 +1,7 @@
 package core.config;
 
+import core.model.bean.PageBean;
+import core.model.bean.ResultBean;
 import core.model.bean.StudentScoreBean;
 import net.atomarrow.configs.Config;
 import net.atomarrow.db.orm.OrmContext;
@@ -14,11 +16,8 @@ import java.util.List;
  */
 @Component
 public class ProjectConfig extends Config {
-
     /**
      * 是否开启打印日志
-     *
-     * @return
      */
     @Override
     public boolean configServiceLog() {
@@ -66,6 +65,8 @@ public class ProjectConfig extends Config {
      */
     @Override
     public void configOrmBean(OrmContext ormContext) {
+        ormContext.addBean(PageBean.class);
+        ormContext.addBean(ResultBean.class);
         ormContext.addBean(StudentScoreBean.class);
     }
 }

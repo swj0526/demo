@@ -47,5 +47,4 @@ public class ResultBean {
         this.count = count;
     }
 
-
 }

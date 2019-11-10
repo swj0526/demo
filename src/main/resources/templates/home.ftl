@@ -57,16 +57,7 @@
                     });
                     //$(this).attr('data-type', 'tabChange');
                     element.tabChange('demo', id);
-                } else if (id == "2") {
-                    element.tabAdd('demo', {
-                        title: $(this).text(), //新增成绩
-                        content: '<iframe src="/addScore" frameborder="0" height="550px" width="100%"></iframe>',
-                        id: id //实际使用一般是规定好的id，这里以时间戳模拟下
-                    });
-                   // $(this).attr('data-type', 'tabChange');
-                    //切换到指定Tab项
-                    element.tabChange('demo', id);
-                }else if(id == "3"){
+                } else if(id == "3"){
                     element.tabAdd('demo', {
                         title: $(this).text(), //学生信息查询
                         content: '<iframe src="/studentList" frameborder="0" height="700px" width="100%"></iframe>',

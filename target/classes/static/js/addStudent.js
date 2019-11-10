@@ -18,7 +18,7 @@
                             layer.msg('注册成功!');
                             $("#reset").trigger("click");
                         } else if (result.success == false) {
-                            layer.msg(result.msg);
+                            layer.msg("注册失败1");
                         }
                     });
                     return false;

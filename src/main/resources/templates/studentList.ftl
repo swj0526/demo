@@ -223,7 +223,7 @@
                         layer.close(index);//向服务端发送删除指令
                         /*    alert(data.score);*/
                         //删除事件
-                        $.post("/delStudentController", {id: data.id, scoreId: data.scoreId}, function () {
+                        $.post("/deleteStudentScoreController", {id: data.id, scoreId: data.scoreId}, function () {
                             layer.msg("删除成功!");
                         });
                     });

@@ -1,17 +1,21 @@
 package core.model.domain;
 
-public class TbScore {
-    private int scoreId;
+import net.atomarrow.domains.Domain;
+import org.springframework.stereotype.Component;
+
+@Component
+public class TbScore extends Domain {
+    private Integer id;
     private int chinese; //语文
     private int english; //英语
     private int maths;  //数学
 
-    public int getScoreId() {
-        return scoreId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setScoreId(int id) {
-        this.scoreId = scoreId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public int getChinese() {
@@ -37,5 +41,4 @@ public class TbScore {
     public void setMaths(int maths) {
         this.maths = maths;
     }
-
 }

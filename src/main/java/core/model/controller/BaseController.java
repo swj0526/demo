@@ -1,12 +1,14 @@
-package core.model.service;
+package core.model.controller;
 
 
-import core.model.bean.PagerBean;
 import core.model.bean.ResultBean;
 import org.springframework.stereotype.Service;
-
+/**
+ * @author swj
+ * @create 2019-11-04 22:18
+ */
 @Service
-public class BaseService {
+public class BaseController {
 
     public static ResultBean success() {
         ResultBean resultBean = new ResultBean();

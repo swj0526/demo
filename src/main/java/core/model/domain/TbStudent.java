@@ -1,26 +1,22 @@
 package core.model.domain;
 
-public class TbStudent { //学生表
-    private int id;
+import net.atomarrow.domains.Domain;
+import org.springframework.stereotype.Component;
+
+@Component
+public class TbStudent extends Domain { //学生表
+    private Integer id;
     private String name; //姓名
     private String address;//地址
-    private int scoreId;//分数id
+    private Integer scoreId;//分数id
     private String time;//创建时间
-    private int gradeId;//年级id
+    private Integer gradeId;//年级id
 
-    public int getGradeId() {
-        return gradeId;
-    }
-
-    public void setGradeId(int gradeId) {
-        this.gradeId = gradeId;
-    }
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -40,15 +36,13 @@ public class TbStudent { //学生表
         this.address = address;
     }
 
-
-    public int getScoreId() {
+    public Integer getScoreId() {
         return scoreId;
     }
 
-    public void setScoreId(int scoreId) {
+    public void setScoreId(Integer scoreId) {
         this.scoreId = scoreId;
     }
-
 
     public String getTime() {
         return time;
@@ -58,15 +52,11 @@ public class TbStudent { //学生表
         this.time = time;
     }
 
-    @Override
-    public String toString() {
-        return "TbStudent{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", scoreId=" + scoreId +
-                ", time='" + time + '\'' +
-                ", gradeId=" + gradeId +
-                '}';
+    public Integer getGradeId() {
+        return gradeId;
+    }
+
+    public void setGradeId(Integer gradeId) {
+        this.gradeId = gradeId;
     }
 }

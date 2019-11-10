@@ -1,22 +1,26 @@
 package core.model.domain;
 
-public class TbGrade {
-    private int gradeId;
+import net.atomarrow.domains.Domain;
+import org.springframework.stereotype.Component;
+
+@Component
+public class TbGrade extends Domain {
+    private Integer id;
     private String gradeName;  //年级名称
 
-    public int getGradeId() {
-        return gradeId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setGradeId(int gradeId) {
-        this.gradeId = gradeId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getGradeName() {
         return gradeName;
     }
 
-    public void setGradeName(String name) {
+    public void setGradeName(String gradeName) {
         this.gradeName = gradeName;
     }
 }

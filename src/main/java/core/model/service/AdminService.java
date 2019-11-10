@@ -1,100 +1,92 @@
 package core.model.service;
 
-import core.model.bean.AdminBean;
-import core.model.bean.ResultBean;
 import core.model.domain.TbAdmin;
-import core.utils.Md5Utils;
-import core.utils.database.DBUtils;
-import net.atomarrow.bean.Pager;
+import core.model.util.Md5Utils;
 import net.atomarrow.bean.ServiceResult;
 import net.atomarrow.db.parser.Conditions;
-import net.atomarrow.db.parser.Expression;
 import net.atomarrow.services.Service;
-import net.atomarrow.util.StringUtil;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.io.Serializable;
 
 //先要继承框架里面的service
 @Component
 public class AdminService extends Service {
     /**
-     * 根据用户名查找一个用户(service)
+     * 登录service
      *
-     * @param adminBean
+     * @param admin
      * @return
      */
-    public ServiceResult getAdmin(AdminBean adminBean) {
-        /*AdminBean adminBeaDB = get(adminBean);
-        if (adminBeaDB == null) {
-
-            return error("该用户不存在");//返回错误信息,并开启事物回滚
-            return  warn("警告");
-            return  success(adminBeaDB.getId(),"成功");//返回成功信息
-        } else {
-            String old_pass = Md5Utils.md5Utils(adminBean.getPassword());
-            if (old_pass.equals(adminBeaDB.getPassword())) {
-                return success(adminBeaDB);
+    public ServiceResult getAdminService(TbAdmin admin) {
+        ServiceResult result = getAdimDao(admin);
+        if (result.isSuccess() == true) {  //找到返回的数据,
+            //找到数据之后,在取出密码跟现在的密码用md5进行加密
+            TbAdmin adminDB = (TbAdmin) result.getResult();
+            String passwordDB = adminDB.getPassword();
+            String password = admin.getPassword();
+            String passwordMD5 = Md5Utils.md5Utils(password);
+            if (passwordDB.equals(passwordMD5)) {
+                return success(adminDB.getUserName(), "登录成功");
             } else {
-                return failure("密码错误!");
+                return error("密码错误");
             }
+        } else { //没有找到数据
+            return error("用户不存在");
         }
-        ServiceResult result = getA(adminBean);
-        if(!result.isSuccess()){
-            return error(result.getMsg());
-        }*/
-        return null;
     }
 
-    public ServiceResult getA(AdminBean adminBean) {
-        return null;
-
-    }
-
-    public AdminBean get(AdminBean adminBean) {  //根据用户名查找一个用户(dao)
-        String sql = "SELECT * FROM tbadmin WHERE userName = '" + adminBean.getUserName() + "'";
-        AdminBean adminBeanDB = null;
-        try {
-            List<Map<String, Object>> list = DBUtils.getList(sql);
-            if (list.size() != 0) {
-                Map<String, Object> map = list.get(0);
-                adminBeanDB = new AdminBean();
-                for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    if (entry.getKey().equals("password")) {
-                        adminBeanDB.setPassword((String) entry.getValue());
-                    }
-                    if (entry.getKey().equals("userName")) {
-                        adminBeanDB.setUserName((String) entry.getValue());
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+    /**
+     * 登录dao
+     *
+     * @param admin
+     * @return
+     */
+    public ServiceResult getAdimDao(TbAdmin admin) {
+        Conditions conditions = new Conditions(TbAdmin.class);//创建一个条件对象
+        conditions.putEW("userName", admin.getUserName());
+        TbAdmin adminDB = getOne(conditions);//查找一个对象
+        if (adminDB == null) {
+            return error("登录失败");
+        } else {
+            return success(adminDB);
         }
-        return adminBeanDB;
-
-
     }
 
+    /**
+     * 注册用户service
+     *
+     * @param admin
+     * @return
+     */
+    public ServiceResult addAdminService(TbAdmin admin) {
+        //因为是管理员,所以在新增之前要判断用户名存不存在
+        boolean userName = checkExist(TbAdmin.class, "userName", admin.getUserName());
+        if (userName == false) { //没有找到相同的时候,就可以注册
+            //注册之前,要将密码进行加密
+            String password = admin.getPassword();
+            String passwordMD5 = Md5Utils.md5Utils(password);
+            admin.setPassword(passwordMD5);
+             add(admin);//注册用户
+            return success("新增成功");
+        } else { //找到了,返回失败,因为用户名不可重复
+            return error("用户名已存在,请重新注册用户名");
+        }
 
-    public ResultBean addAdmin(TbAdmin admin) { //新增用户(service)
-        //新增一条数据
+       /* //新增一条数据
         add(admin);
 
         List<TbAdmin> list = new ArrayList<>();
-        /*add(list);*/
+        *//*add(list);*//*
         boolean b = addByBatch(list);//添加list类型
 
-        Conditions conditions = new Conditions(TbAdmin.class);//
+       Conditions  conditions = new Conditions(TbAdmin.class);//
 
         conditions.setReturnClass(AdminBean.class);
         conditions.setSelectValue("select b.name as name");
-        /*conditions.putEW("userName", admin.getUserName());
+        *//*conditions.putEW("userName", admin.getUserName());
         conditions.putEW("password",admin.getPassword());
-        int count = getCount(conditions);*/
+        int count = getCount(conditions);*//*
         boolean notBlank = StringUtil.isNotBlank(admin.getUserName());
         if (notBlank) {
             conditions.putLIKE("name", admin.getUserName());
@@ -114,7 +106,7 @@ public class AdminService extends Service {
         Pager pager = new Pager();
         pager.setDataTotal(count);
         getListByPage(conditions, pager);
-       /* //先判断用户名有误重复
+       *//* //先判断用户名有误重复
         AdminBean adminBeanDB = get(adminBean);
         if (adminBeanDB == null) {
             //没有重复的名称,在继续新增
@@ -126,14 +118,7 @@ public class AdminService extends Service {
             }
         } else {
             return failure("该用户名已存在,重新填写!");
-        }*/
-        return null;
+        }*//*
+        return null;*/
     }
-
-    /*public int add(TbAdmin adminBean) {//新增用户(dao)
-        String sql = "INSERT INTO tbadmin (userName,password) VALUES ('" + adminBean.getUserName() + "','" + adminBean.getPassword() + "')";
-        int update = DBUtils.update(sql);
-        return update;
-
-    }*/
 }

@@ -1,5 +1,7 @@
 package core.model.domain;
 
+import net.atomarrow.db.annotation.FieldType;
+import net.atomarrow.db.enums.Type;
 import net.atomarrow.domains.Domain;
 import org.springframework.stereotype.Component;
 
@@ -9,11 +11,11 @@ public class TbAdmin extends Domain {  //管理员账号表
     private String userName; //用户名
     private String password; //密码
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -31,23 +33,5 @@ public class TbAdmin extends Domain {  //管理员账号表
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    @Override
-    public String toString() {
-        return "TbAdmin{" +
-                "id=" + id +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                '}';
-    }
-
-    public TbAdmin(Integer id, String userName, String password) {
-        this.id = id;
-        this.userName = userName;
-        this.password = password;
-    }
-
-    public TbAdmin() {
     }
 }
